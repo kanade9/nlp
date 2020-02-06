@@ -1,16 +1,26 @@
 from pathlib import Path
-from janome.tokenizer import Tokenizer
-from gensim.models import word2vec
+import MeCab
 import re
 
 path = Path(__file__).parent
 path /= './Data'
 print(path.resolve())
+tagger = MeCab.Tagger("-Owakati")
+
+hinshi_list = ['名詞', '動詞', '形容詞', '副詞', '助詞', '接続詞', '助動詞', '連体詞', '感動詞']
 
 
 def extract_words(tex):
-    tokens = t.tokenize(tex)
-    return [token.base_form for token in tokens if token.part_of_speech.split(',')[0] in ['名詞', '動詞', '形容詞', '副詞']]
+    node = tagger.parseToNode(tex)
+    # print(tex)
+    while node:
+        surface = node.surface  # これが文字列
+        feature = node.feature  # 情報をとってくる
+        data = feature.split(',')
+        hinshi = data[0]
+        if hinshi in hinshi_list:
+            return surface
+        node = node.next
 
 
 for file_name in path.iterdir():
@@ -35,21 +45,16 @@ for file_name in path.iterdir():
         text = re.sub('\r', '', text)
 
         # 文書の整形出力確認
-        # f = open('output.txt', 'w')
-        # f.write(text)
-        # f.close()
-
-        t = Tokenizer()
+        f = open('output.txt', 'w')
+        f.write(text)
+        f.close()
 
         sentences = text.split('。')
         word_list = [extract_words(sentence) for sentence in sentences]
-
+        word_list.pop(-1)  # リスト末尾はNoneとなるため取り除く
         # 単語リスト生成確認
+        print(word_list)
         # f = open('word_list.txt', 'w')
         # for l in word_list:
-        #     f.write(str(l)+"\n")
+        #     f.write(str(l) + "\n")
         # f.close()
-
-        # modelの生成実験
-        model = word2vec.Word2Vec(word_list, size=100, min_count=5, window=5, iter=3)
-        model.save("word2vec_genism_model_kanade_sample")
