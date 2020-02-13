@@ -1,28 +1,28 @@
 from pathlib import Path
-import MeCab
+from natto import MeCab
 import re
 
 path = Path(__file__).parent
 path /= './Data'
 print(path.resolve())
-tagger = MeCab.Tagger("-Owakati")
+
+tagger = MeCab("-Owakati")
 
 hinshi_list = ['名詞', '動詞', '形容詞', '副詞', '助詞', '接続詞', '助動詞', '連体詞', '感動詞']
 
 
 def extract_words(tex):
-    node = tagger.parseToNode(tex)
-    # print(tex)
-    while node:
-        surface = node.surface  # これが文字列
-        feature = node.feature  # 情報をとってくる
-        data = feature.split(',')
-        hinshi = data[0]
-        if hinshi in hinshi_list:
-            return surface
-        node = node.next
-
-
+    with MeCab() as nm:
+        for n in nm.parse(tex, as_nodes=True):
+            # print(n)
+            if not n.is_eos():
+                # n.featureはstring型なので品詞を取得するために','を探してそこまでを取得する。
+                surface = n.surface
+                hinshi = n.feature[:n.feature.find(',')]
+                # print(surface, hinshi)
+                if hinshi in hinshi_list:
+                    return surface
+#
 for file_name in path.iterdir():
     print(file_name)
 
@@ -54,7 +54,7 @@ for file_name in path.iterdir():
         word_list.pop(-1)  # リスト末尾はNoneとなるため取り除く
         # 単語リスト生成確認
         print(word_list)
-        # f = open('word_list.txt', 'w')
-        # for l in word_list:
-        #     f.write(str(l) + "\n")
-        # f.close()
+        f = open('word_list.txt', 'w')
+        for l in word_list:
+            f.write(str(l) + "\n")
+        f.close()
