@@ -1,8 +1,14 @@
 from pathlib import Path
 from natto import MeCab
-import re
+from gensim.models import KeyedVectors
+import re, chakin
 
+chakin.search(lang='Japanese')
+chakin.download(number=6, save_dir='./')
+
+model = KeyedVectors.load_word2vec_format("./downloadfile", binary=False)
 path = Path(__file__).parent
+
 path /= './Data'
 print(path.resolve())
 
@@ -22,6 +28,8 @@ def extract_words(tex):
                 # print(surface, hinshi)
                 if hinshi in hinshi_list:
                     return surface
+
+
 #
 for file_name in path.iterdir():
     print(file_name)
@@ -53,6 +61,7 @@ for file_name in path.iterdir():
         word_list = [extract_words(sentence) for sentence in sentences]
         word_list.pop(-1)  # リスト末尾はNoneとなるため取り除く
         # 単語リスト生成確認
+        set(word_list)
         print(word_list)
         f = open('word_list.txt', 'w')
         for l in word_list:
