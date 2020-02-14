@@ -1,11 +1,17 @@
 from gensim.models import KeyedVectors
-import chakin
+import numpy as np
 
-# chakin.search(lang='Japanese')
-# chakin.download(number=6, save_dir='./')
+model = KeyedVectors.load_word2vec_format('./entity_vector.model.bin', binary=True)
 #
-model = KeyedVectors.load_word2vec_format('./cc.ja.300.vec.gz', binary=False)
-#
-results = model.most_similar(u'[与田祐希]')
-for result in results:
-    print(result)
+# print(model['カレー'].shape)
+# print(np.array((model['こんにちは'])))
+# results = model.most_similar(u'[]')
+# for result in results:
+#     print(result)
+m = ['カレー', 'おにぎり']
+a = np.zeros((1, 200))
+
+for i in m:
+    a = np.vstack((a, np.array(model[i])))
+
+print(a)

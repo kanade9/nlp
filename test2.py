@@ -3,10 +3,10 @@ from natto import MeCab
 from gensim.models import KeyedVectors
 import re, chakin
 
-chakin.search(lang='Japanese')
-chakin.download(number=6, save_dir='./')
+# chakin.search(lang='Japanese')
+# chakin.download(number=6, save_dir='./')
 
-model = KeyedVectors.load_word2vec_format("./downloadfile", binary=False)
+# model = KeyedVectors.load_word2vec_format("./downloadfile", binary=False)
 path = Path(__file__).parent
 
 path /= './Data'
@@ -60,10 +60,11 @@ for file_name in path.iterdir():
         sentences = text.split('。')
         word_list = [extract_words(sentence) for sentence in sentences]
         word_list.pop(-1)  # リスト末尾はNoneとなるため取り除く
+
         # 単語リスト生成確認
-        set(word_list)
-        print(word_list)
-        f = open('word_list.txt', 'w')
-        for l in word_list:
+        set_word_list = set(word_list)
+        print(set_word_list)
+        f = open('set_word_list.txt', 'w')
+        for l in set_word_list:
             f.write(str(l) + "\n")
         f.close()
