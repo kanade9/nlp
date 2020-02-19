@@ -68,12 +68,12 @@ for file_name in path.iterdir():
 
 model = KeyedVectors.load_word2vec_format('./entity_vector.model.bin', binary=True)
 a = np.zeros((len(set_word_list), 200))
-for id, vo in enumerate(set_word_list):
-    print(vo)
+cnt = -1
+for vo in set_word_list:
+    cnt += 1
     try:
         vo_model = model[vo.rstrip('\n')]
+        a[cnt] = vo_model
     except:
         continue
-    a[id] += np.array(vo_model)
-    # print(vo.rstrip('\n'))
-    np.save('word_vector.npy', a)
+np.save('word_vector.npy', a)
