@@ -1,12 +1,9 @@
 from pathlib import Path
 from natto import MeCab
+import re
 from gensim.models import KeyedVectors
-import re, chakin
+import numpy as np
 
-# chakin.search(lang='Japanese')
-# chakin.download(number=6, save_dir='./')
-
-# model = KeyedVectors.load_word2vec_format("./downloadfile", binary=False)
 path = Path(__file__).parent
 
 path /= './Data'
@@ -68,3 +65,15 @@ for file_name in path.iterdir():
         for l in set_word_list:
             f.write(str(l) + "\n")
         f.close()
+
+model = KeyedVectors.load_word2vec_format('./entity_vector.model.bin', binary=True)
+a = np.zeros((len(set_word_list), 200))
+for id, vo in enumerate(set_word_list):
+    print(vo)
+    try:
+        vo_model = model[vo.rstrip('\n')]
+    except:
+        continue
+    a[id] += np.array(vo_model)
+    # print(vo.rstrip('\n'))
+    np.save('word_vector.npy', a)
