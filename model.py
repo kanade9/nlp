@@ -13,6 +13,7 @@ n = len(a)
 trans = torchvision.transforms.ToTensor()
 trans_vec = trans(a)
 
+window_sizes = n
 
 class Model(nn.Module):
     def __init__(self):
@@ -21,6 +22,8 @@ class Model(nn.Module):
         self.conv_3 = nn.Conv2d(0, 100, (3, 200))
         self.conv_4 = nn.Conv2d(0, 100, (4, 200))
         self.conv_5 = nn.Conv2d(0, 100, (5, 200))
+
+        self.fc = nn.Linear(10 * window_sizes, 10)
 
     def forward(self, x):
         x1 = F.tanh(self.conv_3(x))
@@ -32,6 +35,5 @@ class Model(nn.Module):
         x3n = F.max_pool1d(x3, x3.size(2))
         x = torch.cat((x1n, x2n, x3n), 1)
         x = F.dropout(x)
-
-        out = self.fc1(x)
+        out = F.softmax(x)
         return out
