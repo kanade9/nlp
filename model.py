@@ -4,6 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import torchvision
 import numpy as np
+from torch.autograd import Variable
 
 # 入力は200次元の奴が480個??
 # kは次元数=200 nは入力の単語数=841
@@ -27,6 +28,7 @@ class Model(nn.Module):
         self.fc = nn.Linear(10 * window_sizes, 10)
 
     def forward(self, x):
+
         x1 = torch.tanh(self.conv_3(x))
         x2 = torch.tanh(self.conv_4(x))
         x3 = torch.tanh(self.conv_5(x))
