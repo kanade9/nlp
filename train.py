@@ -6,11 +6,22 @@ import torch.nn.functional as F
 import torchvision
 import numpy as np
 import torch.autograd as autograd
+from torchtext import data
 
 # batchの中には batch.text , batch.label
 
-# あとで修正
-# train_iter と　args そしてargs. xx_intervalってなんだ???
+# 文書をバッチ化して、辞書を作って対応させるようにする
+
+
+textPath = "../Data/kokoro.txt"
+TEXT = data.Field(sequential=True, use_vocab=True)
+pos = data.TabularDataset(
+    path=textPath, format='csv',
+    fields=[('text', TEXT)])
+
+# 辞書を作成する
+TEXT.build_vocab(pos)
+
 train_iter = data.BucketIterator(dataset=pos, batch_size=3, device=-1,
                                  repeat=False)
 
@@ -44,8 +55,3 @@ def train(model):
                 accuracy = 100.0 * corrects / batch.batch_size
                 sys.stdout.write('\rBatch[{}] - loss: {:.6f} acc: {:.4f}%({}/{})'
                                  .format(steps, loss.data[0], accuracy, corrects, batch.batch_size))
-
-
-
-
-model.train()
